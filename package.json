@@ -2,10 +2,10 @@
   "name": "console-catalog-api",
   "version": "1.0.0",
   "description": "REST API for iconic consoles, games, franchises, brands, users, and reviews.",
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "keywords": [
     "nodejs",
