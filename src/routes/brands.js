@@ -33,4 +33,27 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+// POST /api/brands - Create a new brand
+router.post("/", async (req, res, next) => {
+  try {
+    const { name, country, foundedYear, description } = req.body; // om de brand const simpel te houden
+
+    if (!name || !country) {
+      return res.status(400).send("Name and country are required.");
+    }
+
+    const brand = new Brand({
+      name,
+      country,
+      foundedYear,
+      description,
+    });
+
+    await brand.save();
+    res.status(201).send(brand);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

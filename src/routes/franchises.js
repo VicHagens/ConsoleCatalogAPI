@@ -33,4 +33,27 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+// POST /api/franchises - Create a new franchise
+router.post("/", async (req, res, next) => {
+  try {
+    const { name, createdBy, firstReleaseYear, description } = req.body;
+
+    if (!name) {
+      return res.status(400).send("Name is required.");
+    }
+
+    const franchise = new Franchise({
+      name,
+      createdBy,
+      firstReleaseYear,
+      description,
+    });
+
+    await franchise.save();
+    res.status(201).send(franchise);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

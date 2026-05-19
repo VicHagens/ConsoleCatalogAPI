@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const ConsoleModel = require("../models/console");
+const Brand = require("../models/brand");
 
 const router = express.Router();
 
@@ -34,6 +35,40 @@ router.get("/:id", async (req, res, next) => {
     }
 
     res.send(consoleItem);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// POST /api/consoles - Create a new console
+router.post("/", async (req, res, next) => {
+  try {
+    const { name, brand, generation, releaseYear, description } = req.body;
+
+    if (!name || !brand || !releaseYear) {
+      return res.status(400).send("Name, brand and release year are required.");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(brand)) {
+      return res.status(400).send("Invalid brand id.");
+    }
+
+    const existingBrand = await Brand.findById(brand);
+
+    if (!existingBrand) {
+      return res.status(404).send("Brand not found.");
+    }
+
+    const consoleItem = new ConsoleModel({
+      name,
+      brand,
+      generation,
+      releaseYear,
+      description,
+    });
+
+    await consoleItem.save();
+    res.status(201).send(consoleItem);
   } catch (error) {
     next(error);
   }
