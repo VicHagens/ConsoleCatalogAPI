@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
 async function connectDatabase() {
-  if (!process.env.MONGODB_URL) {
-    console.log("MONGODB_URL is not set in environment variables.");
+  if (!process.env.MONGODB_URI) {
+    console.log("MONGODB_URI is not set in environment variables.");
     return;
   }
 
-  await mongoose.connect(process.env.MONGODB_URL);
+  await mongoose.connect(process.env.MONGODB_URI);
   console.log("Connected to MongoDB");
 }
 

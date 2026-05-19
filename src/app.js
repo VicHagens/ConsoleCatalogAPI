@@ -12,7 +12,7 @@ app.use(express.json());
 
 // greeting home route
 app.get("/", (req, res) => {
-  res.send("Welcome to the ConsoleCatalog API by Vic Hagens!");
+  res.send("Welcome to the ConsoleCatalog API by Vic!");
 });
 
 // API routes
