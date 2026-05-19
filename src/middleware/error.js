@@ -1,7 +1,7 @@
-function errorHandler(err, req, res, next) {
+function errorMiddleware(err, req, res, next) {
   console.error(err.message); // Log the error message for debugging
 
   res.status(500).send("Internal Server Error"); // Send a generic error response to the client
 }
 
-module.exports = errorHandler; // Export the error handler to be used in the main app
+module.exports = errorMiddleware; // Export the error middleware to be used in the main app
