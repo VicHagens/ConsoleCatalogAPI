@@ -6,12 +6,11 @@ const franchises = require("./routes/franchises");
 const games = require("./routes/games");
 const reviews = require("./routes/reviews");
 const users = require("./routes/users");
+const auth = require("./routes/auth");
 // Import middleware
 const errorHandler = require("./middleware/error");
 
 const app = express();
-
-
 
 app.use(express.json());
 
@@ -27,6 +26,7 @@ app.use("/api/franchises", franchises);
 app.use("/api/games", games);
 app.use("/api/reviews", reviews);
 app.use("/api/users", users);
+app.use("/api/auth", auth);
 
 app.use(errorHandler);
 
