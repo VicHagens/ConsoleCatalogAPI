@@ -56,4 +56,38 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+// PUT /api/franchises/:id - Update a franchise
+router.put("/:id", async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).send("Invalid franchise id.");
+    }
+
+    const { name, createdBy, firstReleaseYear, description } = req.body;
+
+    if (!name) {
+      return res.status(400).send("Name is required.");
+    }
+
+    const franchise = await Franchise.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        createdBy,
+        firstReleaseYear,
+        description,
+      },
+      { new: true, runValidators: true },
+    );
+
+    if (!franchise) {
+      return res.status(404).send("Franchise not found.");
+    }
+
+    res.send(franchise);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

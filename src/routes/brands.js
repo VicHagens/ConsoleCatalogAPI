@@ -56,4 +56,38 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+// PUT /api/brands/:id - Update a brand
+router.put("/:id", async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).send("Invalid brand id.");
+    }
+
+    const { name, country, foundedYear, description } = req.body;
+
+    if (!name || !country) {
+      return res.status(400).send("Name and country are required.");
+    }
+
+    const brand = await Brand.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        country,
+        foundedYear,
+        description,
+      },
+      { new: true, runValidators: true },
+    );
+
+    if (!brand) {
+      return res.status(404).send("Brand not found.");
+    }
+
+    res.send(brand);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
