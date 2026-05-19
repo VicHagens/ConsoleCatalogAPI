@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const ConsoleModel = require("../models/console");
 const Brand = require("../models/brand");
+const adminMiddleware = require("../middleware/admin");
+const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -41,7 +43,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // POST /api/consoles - Create a new console
-router.post("/", async (req, res, next) => {
+router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     const { name, brand, generation, releaseYear, description } = req.body;
 
@@ -75,7 +77,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // PUT /api/consoles/:id - Update a console
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Invalid console id.");
@@ -120,7 +122,7 @@ router.put("/:id", async (req, res, next) => {
 });
 
 // DELETE /api/consoles/:id - Delete a console
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Invalid console id.");

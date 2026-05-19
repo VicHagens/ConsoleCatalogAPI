@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Brand = require("../models/brand");
+const adminMiddleware = require("../middleware/admin");
+const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -34,7 +36,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // POST /api/brands - Create a new brand
-router.post("/", async (req, res, next) => {
+router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     const { name, country, foundedYear, description } = req.body; // om de brand const simpel te houden
 
@@ -57,7 +59,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // PUT /api/brands/:id - Update a brand
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Invalid brand id.");
@@ -91,7 +93,7 @@ router.put("/:id", async (req, res, next) => {
 });
 
 // DELETE /api/brands/:id - Delete a brand
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Invalid brand id.");

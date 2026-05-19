@@ -4,6 +4,8 @@ const Game = require("../models/game");
 const Brand = require("../models/brand");
 const ConsoleModel = require("../models/console");
 const Franchise = require("../models/franchise");
+const adminMiddleware = require("../middleware/admin");
+const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -45,7 +47,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // POST /api/games - Create a new game
-router.post("/", async (req, res, next) => {
+router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     const {
       title,
@@ -121,7 +123,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // PUT /api/games/:id - Update a game
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Invalid game id.");
@@ -211,7 +213,7 @@ router.put("/:id", async (req, res, next) => {
 });
 
 // DELETE /api/games/:id - Delete a game
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Invalid game id.");

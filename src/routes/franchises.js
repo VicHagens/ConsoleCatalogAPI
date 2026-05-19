@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Franchise = require("../models/franchise");
+const adminMiddleware = require("../middleware/admin");
+const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -34,7 +36,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // POST /api/franchises - Create a new franchise
-router.post("/", async (req, res, next) => {
+router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     const { name, createdBy, firstReleaseYear, description } = req.body;
 
@@ -57,7 +59,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // PUT /api/franchises/:id - Update a franchise
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Invalid franchise id.");
@@ -91,7 +93,7 @@ router.put("/:id", async (req, res, next) => {
 });
 
 // DELETE /api/franchises/:id - Delete a franchise
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Invalid franchise id.");
