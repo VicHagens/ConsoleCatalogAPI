@@ -58,7 +58,9 @@ router.post("/", async (req, res, next) => {
     } = req.body;
 
     if (!title || !consoles || !publisher || !releaseYear) {
-      return res.status(400).send("Title, consoles, publisher and release year are required.");
+      return res
+        .status(400)
+        .send("Title, consoles, publisher and release year are required.");
     }
 
     if (!Array.isArray(consoles) || consoles.length === 0) {
@@ -85,7 +87,9 @@ router.post("/", async (req, res, next) => {
       return res.status(404).send("Publisher not found.");
     }
 
-    const existingConsoles = await ConsoleModel.find({ _id: { $in: consoles } });
+    const existingConsoles = await ConsoleModel.find({
+      _id: { $in: consoles },
+    });
 
     if (existingConsoles.length !== consoles.length) {
       return res.status(404).send("One or more consoles were not found.");
@@ -134,7 +138,9 @@ router.put("/:id", async (req, res, next) => {
     } = req.body;
 
     if (!title || !consoles || !publisher || !releaseYear) {
-      return res.status(400).send("Title, consoles, publisher and release year are required.");
+      return res
+        .status(400)
+        .send("Title, consoles, publisher and release year are required.");
     }
 
     if (!Array.isArray(consoles) || consoles.length === 0) {
@@ -161,7 +167,9 @@ router.put("/:id", async (req, res, next) => {
       return res.status(404).send("Publisher not found.");
     }
 
-    const existingConsoles = await ConsoleModel.find({ _id: { $in: consoles } });
+    const existingConsoles = await ConsoleModel.find({
+      _id: { $in: consoles },
+    });
 
     if (existingConsoles.length !== consoles.length) {
       return res.status(404).send("One or more consoles were not found.");
@@ -191,6 +199,25 @@ router.put("/:id", async (req, res, next) => {
       .populate("franchise", "name")
       .populate("consoles", "name releaseYear")
       .populate("publisher", "name");
+
+    if (!game) {
+      return res.status(404).send("Game not found.");
+    }
+
+    res.send(game);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/games/:id - Delete a game
+router.delete("/:id", async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).send("Invalid game id.");
+    }
+
+    const game = await Game.findByIdAndDelete(req.params.id);
 
     if (!game) {
       return res.status(404).send("Game not found.");

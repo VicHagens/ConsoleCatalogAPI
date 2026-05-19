@@ -90,4 +90,23 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
+// DELETE /api/brands/:id - Delete a brand
+router.delete("/:id", async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).send("Invalid brand id.");
+    }
+
+    const brand = await Brand.findByIdAndDelete(req.params.id);
+
+    if (!brand) {
+      return res.status(404).send("Brand not found.");
+    }
+
+    res.send(brand);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

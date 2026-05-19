@@ -119,4 +119,23 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
+// DELETE /api/consoles/:id - Delete a console
+router.delete("/:id", async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).send("Invalid console id.");
+    }
+
+    const consoleItem = await ConsoleModel.findByIdAndDelete(req.params.id);
+
+    if (!consoleItem) {
+      return res.status(404).send("Console not found.");
+    }
+
+    res.send(consoleItem);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

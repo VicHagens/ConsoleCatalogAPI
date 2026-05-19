@@ -90,4 +90,23 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
+// DELETE /api/franchises/:id - Delete a franchise
+router.delete("/:id", async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).send("Invalid franchise id.");
+    }
+
+    const franchise = await Franchise.findByIdAndDelete(req.params.id);
+
+    if (!franchise) {
+      return res.status(404).send("Franchise not found.");
+    }
+
+    res.send(franchise);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
