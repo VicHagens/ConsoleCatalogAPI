@@ -5,6 +5,7 @@ const consoles = require("./routes/consoles");
 const franchises = require("./routes/franchises");
 const games = require("./routes/games");
 const reviews = require("./routes/reviews");
+const users = require("./routes/users");
 // Import middleware
 const errorHandler = require("./middleware/error");
 
@@ -25,6 +26,7 @@ app.use("/api/consoles", consoles);
 app.use("/api/franchises", franchises);
 app.use("/api/games", games);
 app.use("/api/reviews", reviews);
+app.use("/api/users", users);
 
 app.use(errorHandler);
 
