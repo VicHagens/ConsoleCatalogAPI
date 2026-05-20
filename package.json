@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "seed": "node src/seed.js"
+    "seed": "node src/seed.js",
+    "test": "jest --runInBand"
   },
   "keywords": [
     "nodejs",
@@ -19,15 +20,17 @@
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
-    "bcryptjs": "^2.4.3",
     "config": "^3.3.12",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^4.21.2",
+    "jest": "^30.4.2",
     "joi": "^18.2.1",
     "jsonwebtoken": "^9.0.2",
+    "mongodb-memory-server": "^11.1.0",
     "mongoose": "^8.9.5",
     "path": "^0.12.7",
+    "supertest": "^7.2.2",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"
   },
