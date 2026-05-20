@@ -40,3 +40,43 @@ x-auth-token: {{token}}
 ### Delete review as admin
 DELETE {{baseUrl}}/api/reviews/{{reviewId}}
 x-auth-token: {{adminToken}}
+
+### Expected to fail - create review without token
+POST {{baseUrl}}/api/games/{{gameId}}/reviews
+Content-Type: application/json
+
+{
+  "rating": 9,
+  "comment": "Still plays great today."
+}
+
+### Expected to fail - create review with invalid rating
+POST {{baseUrl}}/api/games/{{gameId}}/reviews
+x-auth-token: {{token}}
+Content-Type: application/json
+
+{
+  "rating": 11,
+  "comment": "Rating is too high."
+}
+
+### Expected to fail - create review for invalid game id
+POST {{baseUrl}}/api/games/not-a-valid-id/reviews
+x-auth-token: {{token}}
+Content-Type: application/json
+
+{
+  "rating": 9,
+  "comment": "Invalid game id."
+}
+
+### Expected to fail - update review without token
+PATCH {{baseUrl}}/api/reviews/{{reviewId}}
+Content-Type: application/json
+
+{
+  "rating": 7
+}
+
+### Expected to fail - get review with invalid id
+GET {{baseUrl}}/api/reviews/not-a-valid-id

@@ -35,3 +35,29 @@ Content-Type: application/json
 ### Delete franchise - admin only
 DELETE {{baseUrl}}/api/franchises/{{franchiseId}}
 x-auth-token: {{adminToken}}
+
+### Expected to fail - create franchise without token
+POST {{baseUrl}}/api/franchises
+Content-Type: application/json
+
+{
+  "name": "Pokemon",
+  "createdBy": "Game Freak",
+  "firstReleaseYear": 1996,
+  "description": ""
+}
+
+### Expected to fail - create franchise with invalid data
+POST {{baseUrl}}/api/franchises
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "P",
+  "createdBy": "",
+  "firstReleaseYear": 1940,
+  "description": ""
+}
+
+### Expected to fail - get franchise with invalid id
+GET {{baseUrl}}/api/franchises/not-a-valid-id

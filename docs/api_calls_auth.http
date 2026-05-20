@@ -18,3 +18,33 @@ Content-Type: application/json
   "email": "vic@example.com",
   "password": "password123"
 }
+
+### Expected to fail - register with short password
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Vic",
+  "email": "bad@example.com",
+  "password": "short"
+}
+
+### Expected to fail - register tries to set admin role
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Sneaky User",
+  "email": "sneaky@example.com",
+  "password": "password123",
+  "role": "admin"
+}
+
+### Expected to fail - login with wrong password
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "vic@example.com",
+  "password": "wrongpassword"
+}

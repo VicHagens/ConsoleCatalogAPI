@@ -44,3 +44,50 @@ Content-Type: application/json
 ### Delete game - admin only
 DELETE {{baseUrl}}/api/games/{{gameId}}
 x-auth-token: {{adminToken}}
+
+### Expected to fail - create game without token
+POST {{baseUrl}}/api/games
+Content-Type: application/json
+
+{
+  "title": "Pokemon Red",
+  "franchise": "{{franchiseId}}",
+  "consoles": ["{{consoleId}}"],
+  "publisher": "{{publisherId}}",
+  "releaseYear": 1996,
+  "genre": "Role-playing",
+  "description": "Classic monster collecting RPG."
+}
+
+### Expected to fail - create game with empty consoles array
+POST {{baseUrl}}/api/games
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Pokemon Red",
+  "franchise": "{{franchiseId}}",
+  "consoles": [],
+  "publisher": "{{publisherId}}",
+  "releaseYear": 1996,
+  "genre": "Role-playing",
+  "description": "Classic monster collecting RPG."
+}
+
+### Expected to fail - create game with invalid publisher id
+POST {{baseUrl}}/api/games
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Pokemon Red",
+  "franchise": "{{franchiseId}}",
+  "consoles": ["{{consoleId}}"],
+  "publisher": "not-a-valid-id",
+  "releaseYear": 1996,
+  "genre": "Role-playing",
+  "description": "Classic monster collecting RPG."
+}
+
+### Expected to fail - get game with invalid id
+GET {{baseUrl}}/api/games/not-a-valid-id

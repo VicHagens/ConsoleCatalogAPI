@@ -35,3 +35,29 @@ Content-Type: application/json
 ### Delete brand - admin only
 DELETE {{baseUrl}}/api/brands/{{brandId}}
 x-auth-token: {{adminToken}}
+
+### Expected to fail - create brand without token
+POST {{baseUrl}}/api/brands
+Content-Type: application/json
+
+{
+  "name": "Sony",
+  "country": "Japan",
+  "foundedYear": 1946,
+  "description": ""
+}
+
+### Expected to fail - create brand with invalid data
+POST {{baseUrl}}/api/brands
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "S",
+  "country": "",
+  "foundedYear": 1700,
+  "description": ""
+}
+
+### Expected to fail - get brand with invalid id
+GET {{baseUrl}}/api/brands/not-a-valid-id

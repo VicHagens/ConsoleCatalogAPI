@@ -39,3 +39,25 @@ Content-Type: application/json
 ### Delete user - admin only
 DELETE {{baseUrl}}/api/users/{{userId}}
 x-auth-token: {{adminToken}}
+
+### Expected to fail - get all users without token
+GET {{baseUrl}}/api/users
+
+### Expected to fail - get all users as normal user
+GET {{baseUrl}}/api/users
+x-auth-token: {{token}}
+
+### Expected to fail - get user with invalid id
+GET {{baseUrl}}/api/users/not-a-valid-id
+x-auth-token: {{adminToken}}
+
+### Expected to fail - user tries to update own role
+PUT {{baseUrl}}/api/users/{{userId}}
+x-auth-token: {{token}}
+Content-Type: application/json
+
+{
+  "name": "Vic Updated",
+  "email": "vic.updated@example.com",
+  "role": "admin"
+}

@@ -38,3 +38,44 @@ Content-Type: application/json
 ### Delete console - admin only
 DELETE {{baseUrl}}/api/consoles/{{consoleId}}
 x-auth-token: {{adminToken}}
+
+### Expected to fail - create console without token
+POST {{baseUrl}}/api/consoles
+Content-Type: application/json
+
+{
+  "name": "PlayStation 2",
+  "brand": "{{brandId}}",
+  "generation": 6,
+  "releaseYear": 2000,
+  "description": ""
+}
+
+### Expected to fail - create console with invalid brand id
+POST {{baseUrl}}/api/consoles
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "PlayStation 2",
+  "brand": "not-a-valid-id",
+  "generation": 6,
+  "releaseYear": 2000,
+  "description": ""
+}
+
+### Expected to fail - create console with invalid year
+POST {{baseUrl}}/api/consoles
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Old Console",
+  "brand": "{{brandId}}",
+  "generation": 1,
+  "releaseYear": 1900,
+  "description": ""
+}
+
+### Expected to fail - get console with invalid id
+GET {{baseUrl}}/api/consoles/not-a-valid-id
