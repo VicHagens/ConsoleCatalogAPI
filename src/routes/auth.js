@@ -2,12 +2,54 @@ const bcrypt = require("bcrypt");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { validateLogin } = require("../validation/authValidation");
+const {
+  validateRegister,
+  validateLogin,
+} = require("../validation/authValidation");
 
 const router = express.Router();
 
-// POST /api/auth - Login a user
-router.post("/", async (req, res, next) => {
+// POST /api/auth/register - Register a new user
+router.post("/register", async (req, res, next) => {
+  try {
+    const { error } = validateRegister(req.body);
+
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
+
+    const { name, email, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).send("A user with this email already exists.");
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    await user.save();
+
+    res.status(201).send({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// POST /api/auth/login - Login a user
+router.post("/login", async (req, res, next) => {
   try {
     const { error } = validateLogin(req.body);
 

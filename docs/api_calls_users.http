@@ -3,16 +3,6 @@
 @adminToken = paste-admin-token-here
 @userId = paste-user-id-here
 
-### Register user
-POST {{baseUrl}}/api/users
-Content-Type: application/json
-
-{
-  "name": "Vic",
-  "email": "vic@example.com",
-  "password": "password123"
-}
-
 ### Get current user
 GET {{baseUrl}}/api/users/me
 x-auth-token: {{token}}
