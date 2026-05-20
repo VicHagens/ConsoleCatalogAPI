@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const Review = require("../models/review");
 const Game = require("../models/game");
 const authMiddleware = require("../middleware/auth");
-const validateReview = require("../validation/reviewValidation");
+const reviewOwnerOrAdminMiddleware = require("../middleware/reviewOwnerOrAdmin");
+const {
+  validateReview,
+  validateReviewUpdate,
+} = require("../validation/reviewValidation");
 
 const router = express.Router({ mergeParams: true });
 
@@ -109,6 +113,50 @@ router.post("/", authMiddleware, async (req, res, next) => {
       .populate("game", "title releaseYear");
 
     res.status(201).send(savedReview);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// PATCH /api/reviews/:id - Update a review by owner or admin
+router.patch("/:id", authMiddleware, reviewOwnerOrAdminMiddleware, async (req, res, next) => {
+  try {
+    const { error } = validateReviewUpdate(req.body);
+
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
+
+    const review = req.review;
+
+    if (req.body.rating !== undefined) {
+      review.rating = req.body.rating;
+    }
+
+    if (req.body.comment !== undefined) {
+      review.comment = req.body.comment;
+    }
+
+    await review.save();
+    await review.populate("user", "name email");
+    await review.populate("game", "title releaseYear");
+
+    res.send(review);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/reviews/:id - Delete a review by owner or admin
+router.delete("/:id", authMiddleware, reviewOwnerOrAdminMiddleware, async (req, res, next) => {
+  try {
+    const review = req.review;
+
+    await Review.findByIdAndDelete(req.params.id);
+    await review.populate("user", "name email");
+    await review.populate("game", "title releaseYear");
+
+    res.send(review);
   } catch (error) {
     next(error);
   }
