@@ -5,16 +5,17 @@ const Brand = require("./models/brand");
 const Console = require("./models/console");
 const Franchise = require("./models/franchise");
 const Game = require("./models/game");
+const Review = require("./models/review");
 
 async function seedDatabase() {
   if (!process.env.MONGODB_URI) {
-    console.log("MONGODB_URI is not set in environment variables.");
-    return;
+    throw new Error("MONGODB_URI is not set in environment variables.");
   }
 
   await mongoose.connect(process.env.MONGODB_URI);
   console.log("Connected to MongoDB");
 
+  await Review.deleteMany();
   await Game.deleteMany();
   await Console.deleteMany();
   await Franchise.deleteMany();
