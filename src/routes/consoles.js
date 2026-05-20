@@ -54,10 +54,6 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
 
     const { name, brand, generation, releaseYear, description } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(brand)) {
-      return res.status(400).send("Invalid brand id.");
-    }
-
     const existingBrand = await Brand.findById(brand);
 
     if (!existingBrand) {
@@ -93,10 +89,6 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
     }
 
     const { name, brand, generation, releaseYear, description } = req.body;
-
-    if (!mongoose.Types.ObjectId.isValid(brand)) {
-      return res.status(400).send("Invalid brand id.");
-    }
 
     const existingBrand = await Brand.findById(brand);
 

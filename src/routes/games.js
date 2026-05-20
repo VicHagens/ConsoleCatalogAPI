@@ -69,20 +69,6 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
       description,
     } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(publisher)) {
-      return res.status(400).send("Invalid publisher id.");
-    }
-
-    for (const consoleId of consoles) {
-      if (!mongoose.Types.ObjectId.isValid(consoleId)) {
-        return res.status(400).send("Invalid console id.");
-      }
-    }
-
-    if (franchise && !mongoose.Types.ObjectId.isValid(franchise)) {
-      return res.status(400).send("Invalid franchise id.");
-    }
-
     const existingPublisher = await Brand.findById(publisher);
 
     if (!existingPublisher) {
@@ -144,20 +130,6 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
       genre,
       description,
     } = req.body;
-
-    if (!mongoose.Types.ObjectId.isValid(publisher)) {
-      return res.status(400).send("Invalid publisher id.");
-    }
-
-    for (const consoleId of consoles) {
-      if (!mongoose.Types.ObjectId.isValid(consoleId)) {
-        return res.status(400).send("Invalid console id.");
-      }
-    }
-
-    if (franchise && !mongoose.Types.ObjectId.isValid(franchise)) {
-      return res.status(400).send("Invalid franchise id.");
-    }
 
     const existingPublisher = await Brand.findById(publisher);
 
