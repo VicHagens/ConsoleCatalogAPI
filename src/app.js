@@ -23,7 +23,6 @@ app.get("/", (req, res) => {
 app.use("/api/brands", brands);
 app.use("/api/consoles", consoles);
 app.use("/api/franchises", franchises);
-app.use("/api/games/:gameId/reviews", reviews);
 app.use("/api/games", games);
 app.use("/api/reviews", reviews);
 app.use("/api/users", users);

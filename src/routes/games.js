@@ -7,6 +7,7 @@ const Franchise = require("../models/franchise");
 const adminMiddleware = require("../middleware/admin");
 const authMiddleware = require("../middleware/auth");
 const validateGame = require("../validation/gameValidation");
+const reviews = require("./reviews");
 
 const router = express.Router();
 
@@ -24,6 +25,8 @@ router.get("/", async (req, res, next) => {
     next(error);
   }
 });
+
+router.use("/:gameId/reviews", reviews); // ik plaats dit hier in plaats van in app.js omdat ik de gameId nodig heb in de reviews routes, en die is alleen beschikbaar in deze router. plus ook omdat het logisch is.
 
 // GET /api/games/:id - Get game by id
 router.get("/:id", async (req, res, next) => {
