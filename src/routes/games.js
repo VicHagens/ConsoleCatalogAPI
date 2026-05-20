@@ -67,6 +67,7 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
       releaseYear,
       genre,
       description,
+      releaseInfo,
     } = req.body;
 
     const existingPublisher = await Brand.findById(publisher);
@@ -99,6 +100,7 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
       releaseYear,
       genre,
       description,
+      releaseInfo,
     });
 
     await game.save();
@@ -129,6 +131,7 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
       releaseYear,
       genre,
       description,
+      releaseInfo,
     } = req.body;
 
     const existingPublisher = await Brand.findById(publisher);
@@ -163,6 +166,7 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
         releaseYear,
         genre,
         description,
+        releaseInfo,
       },
       { new: true, runValidators: true },
     )

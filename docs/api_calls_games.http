@@ -23,7 +23,12 @@ Content-Type: application/json
   "publisher": "{{publisherId}}",
   "releaseYear": 1996,
   "genre": "Role-playing",
-  "description": "Classic monster collecting RPG."
+  "description": "Classic monster collecting RPG.",
+  "releaseInfo": {
+    "region": "Japan",
+    "originalReleaseDate": "1996-02-27",
+    "ageRating": "E"
+  }
 }
 
 ### Update game - admin only
@@ -38,7 +43,12 @@ Content-Type: application/json
   "publisher": "{{publisherId}}",
   "releaseYear": 1996,
   "genre": "Role-playing",
-  "description": "Updated game description."
+  "description": "Updated game description.",
+  "releaseInfo": {
+    "region": "Japan",
+    "originalReleaseDate": "1996-02-27",
+    "ageRating": "E"
+  }
 }
 
 ### Delete game - admin only

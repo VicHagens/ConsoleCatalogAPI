@@ -1,5 +1,11 @@
 const Joi = require("joi");
 
+const releaseInfoSchema = Joi.object({
+  region: Joi.string().max(80).allow(""),
+  originalReleaseDate: Joi.date(),
+  ageRating: Joi.string().max(20).allow(""),
+});
+
 function validateGame(game) {
   const schema = Joi.object({
     title: Joi.string().min(2).max(150).required(),
@@ -9,6 +15,7 @@ function validateGame(game) {
     releaseYear: Joi.number().integer().min(1970).max(new Date().getFullYear()).required(),
     genre: Joi.string().min(2).max(100).allow(""),
     description: Joi.string().max(1000).allow(""),
+    releaseInfo: releaseInfoSchema,
   });
 
   return schema.validate(game);

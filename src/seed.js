@@ -59,6 +59,12 @@ async function seedDatabase() {
       generation: 3,
       releaseYear: 1983,
       description: "8-bit home console that helped revive the video game industry.",
+      specs: {
+        cpu: "Ricoh 2A03",
+        memory: "2 KB RAM",
+        media: "Cartridge",
+        maxResolution: "256x240",
+      },
     },
     {
       name: "GameCube",
@@ -66,6 +72,12 @@ async function seedDatabase() {
       generation: 6,
       releaseYear: 2001,
       description: "Compact Nintendo console known for its cube shape and handle.",
+      specs: {
+        cpu: "IBM PowerPC Gekko",
+        memory: "24 MB RAM",
+        media: "MiniDVD",
+        maxResolution: "480p",
+      },
     },
     {
       name: "Xbox 360",
@@ -73,6 +85,12 @@ async function seedDatabase() {
       generation: 7,
       releaseYear: 2005,
       description: "Microsoft console known for Xbox Live and many popular multiplayer games.",
+      specs: {
+        cpu: "IBM PowerPC Xenon",
+        memory: "512 MB RAM",
+        media: "DVD",
+        maxResolution: "1080p",
+      },
     },
     {
       name: "Sega Mega Drive",
@@ -137,6 +155,11 @@ async function seedDatabase() {
       releaseYear: 1985,
       genre: "Platformer",
       description: "Classic side-scrolling platform game for the NES.",
+      releaseInfo: {
+        region: "Japan",
+        originalReleaseDate: "1985-09-13",
+        ageRating: "E",
+      },
     },
     {
       title: "The Legend of Zelda: The Wind Waker",
@@ -146,6 +169,11 @@ async function seedDatabase() {
       releaseYear: 2002,
       genre: "Action-adventure",
       description: "GameCube Zelda game known for its cel-shaded art style.",
+      releaseInfo: {
+        region: "Japan",
+        originalReleaseDate: "2002-12-13",
+        ageRating: "E",
+      },
     },
     {
       title: "Halo 3",
@@ -155,6 +183,11 @@ async function seedDatabase() {
       releaseYear: 2007,
       genre: "First-person shooter",
       description: "Major Xbox 360 shooter and multiplayer classic.",
+      releaseInfo: {
+        region: "North America",
+        originalReleaseDate: "2007-09-25",
+        ageRating: "M",
+      },
     },
     {
       title: "Sonic the Hedgehog",

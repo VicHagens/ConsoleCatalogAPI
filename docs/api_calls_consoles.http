@@ -19,7 +19,13 @@ Content-Type: application/json
   "brand": "{{brandId}}",
   "generation": 6,
   "releaseYear": 2000,
-  "description": ""
+  "description": "",
+  "specs": {
+    "cpu": "Emotion Engine",
+    "memory": "32 MB RAM",
+    "media": "DVD",
+    "maxResolution": "480p"
+  }
 }
 
 ### Update console - admin only
@@ -32,7 +38,13 @@ Content-Type: application/json
   "brand": "{{brandId}}",
   "generation": 6,
   "releaseYear": 2000,
-  "description": "Sony console known for its large game library."
+  "description": "Sony console known for its large game library.",
+  "specs": {
+    "cpu": "Emotion Engine",
+    "memory": "32 MB RAM",
+    "media": "DVD",
+    "maxResolution": "480p"
+  }
 }
 
 ### Delete console - admin only

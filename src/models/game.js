@@ -34,6 +34,19 @@ const gameSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  releaseInfo: {
+    region: {
+      type: String,
+      trim: true,
+    },
+    originalReleaseDate: {
+      type: Date,
+    },
+    ageRating: {
+      type: String,
+      trim: true,
+    },
+  },
 });
 
 module.exports = mongoose.model("Game", gameSchema);

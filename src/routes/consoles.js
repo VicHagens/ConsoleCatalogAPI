@@ -52,7 +52,7 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(400).send(error.details[0].message);
     }
 
-    const { name, brand, generation, releaseYear, description } = req.body;
+    const { name, brand, generation, releaseYear, description, specs } = req.body;
 
     const existingBrand = await Brand.findById(brand);
 
@@ -66,6 +66,7 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
       generation,
       releaseYear,
       description,
+      specs,
     });
 
     await consoleItem.save();
@@ -88,7 +89,7 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(400).send(error.details[0].message);
     }
 
-    const { name, brand, generation, releaseYear, description } = req.body;
+    const { name, brand, generation, releaseYear, description, specs } = req.body;
 
     const existingBrand = await Brand.findById(brand);
 
@@ -104,6 +105,7 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
         generation,
         releaseYear,
         description,
+        specs,
       },
       { new: true, runValidators: true },
     ).populate("brand", "name country");
