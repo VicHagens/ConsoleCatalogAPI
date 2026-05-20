@@ -1,0 +1,1413 @@
+openapi: 3.0.3
+info:
+  title: ConsoleCatalog API
+  version: 1.0.0
+  description: REST API for iconic consoles, games, franchises, brands, users, and reviews.
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+tags:
+  - name: Auth
+    description: Registration and login
+  - name: Brands
+    description: Brand catalog endpoints
+  - name: Consoles
+    description: Console catalog endpoints
+  - name: Franchises
+    description: Franchise catalog endpoints
+  - name: Games
+    description: Game catalog endpoints
+  - name: Reviews
+    description: Review endpoints
+  - name: Users
+    description: User profile and admin endpoints
+paths:
+  /:
+    get:
+      summary: Welcome message
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: API welcome message
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Welcome to the ConsoleCatalog API of VicH!
+
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+            example:
+              name: Vic
+              email: vic@example.com
+              password: password123
+      responses:
+        "201":
+          description: User registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPublic"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/auth/login:
+    post:
+      summary: Login a user
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+            example:
+              email: vic@example.com
+              password: password123
+      responses:
+        "200":
+          description: JWT token returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
+              example:
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/brands:
+    get:
+      summary: Get all brands
+      tags:
+        - Brands
+      responses:
+        "200":
+          description: List of brands
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Brand"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: Create a brand
+      tags:
+        - Brands
+      security:
+        - ApiTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrandInput"
+      responses:
+        "201":
+          description: Brand created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/brands/{id}:
+    get:
+      summary: Get a brand by id
+      tags:
+        - Brands
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: Brand found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update a brand
+      tags:
+        - Brands
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BrandInput"
+      responses:
+        "200":
+          description: Brand updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      summary: Delete a brand
+      tags:
+        - Brands
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: Brand deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brand"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/consoles:
+    get:
+      summary: Get all consoles
+      tags:
+        - Consoles
+      responses:
+        "200":
+          description: List of consoles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Console"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: Create a console
+      tags:
+        - Consoles
+      security:
+        - ApiTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConsoleInput"
+      responses:
+        "201":
+          description: Console created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Console"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/consoles/{id}:
+    get:
+      summary: Get a console by id
+      tags:
+        - Consoles
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: Console found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Console"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update a console
+      tags:
+        - Consoles
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConsoleInput"
+      responses:
+        "200":
+          description: Console updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Console"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      summary: Delete a console
+      tags:
+        - Consoles
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: Console deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Console"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/franchises:
+    get:
+      summary: Get all franchises
+      tags:
+        - Franchises
+      responses:
+        "200":
+          description: List of franchises
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Franchise"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: Create a franchise
+      tags:
+        - Franchises
+      security:
+        - ApiTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FranchiseInput"
+      responses:
+        "201":
+          description: Franchise created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Franchise"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/franchises/{id}:
+    get:
+      summary: Get a franchise by id
+      tags:
+        - Franchises
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: Franchise found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Franchise"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update a franchise
+      tags:
+        - Franchises
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FranchiseInput"
+      responses:
+        "200":
+          description: Franchise updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Franchise"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      summary: Delete a franchise
+      tags:
+        - Franchises
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: Franchise deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Franchise"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/games:
+    get:
+      summary: Get all games
+      tags:
+        - Games
+      responses:
+        "200":
+          description: List of games
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Game"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: Create a game
+      tags:
+        - Games
+      security:
+        - ApiTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GameInput"
+      responses:
+        "201":
+          description: Game created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/games/{id}:
+    get:
+      summary: Get a game by id
+      tags:
+        - Games
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: Game found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update a game
+      tags:
+        - Games
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GameInput"
+      responses:
+        "200":
+          description: Game updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      summary: Delete a game
+      tags:
+        - Games
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: Game deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/games/{gameId}/reviews:
+    get:
+      summary: Get reviews for a game
+      tags:
+        - Reviews
+      parameters:
+        - $ref: "#/components/parameters/gameId"
+      responses:
+        "200":
+          description: List of reviews for the game
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: Create a review for a game
+      tags:
+        - Reviews
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/gameId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewInput"
+            example:
+              rating: 9
+              comment: Still plays great today.
+      responses:
+        "201":
+          description: Review created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/reviews:
+    get:
+      summary: Get all reviews
+      tags:
+        - Reviews
+      responses:
+        "200":
+          description: List of all reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/reviews/{id}:
+    get:
+      summary: Get a review by id
+      tags:
+        - Reviews
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: Review found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    patch:
+      summary: Update a review
+      tags:
+        - Reviews
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewUpdateInput"
+            example:
+              rating: 8
+              comment: Updated review after replaying it.
+      responses:
+        "200":
+          description: Review updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      summary: Delete a review
+      tags:
+        - Reviews
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: Review deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/users:
+    get:
+      summary: Get all users
+      tags:
+        - Users
+      security:
+        - ApiTokenAuth: []
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserPublic"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/users/me:
+    get:
+      summary: Get the logged-in user
+      tags:
+        - Users
+      security:
+        - ApiTokenAuth: []
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPublic"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/users/{id}:
+    get:
+      summary: Get a user by id
+      tags:
+        - Users
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPublic"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update a user
+      tags:
+        - Users
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateInput"
+            example:
+              name: Vic Hagens
+              email: vic@example.com
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPublic"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      summary: Delete a user
+      tags:
+        - Users
+      security:
+        - ApiTokenAuth: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        "200":
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPublic"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  securitySchemes:
+    ApiTokenAuth:
+      type: apiKey
+      in: header
+      name: x-auth-token
+      description: JWT token returned by `/api/auth/login`.
+
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      description: MongoDB ObjectId
+      schema:
+        type: string
+        pattern: "^[a-fA-F0-9]{24}$"
+      example: 665f1e5a9a2f1a0012b34567
+    gameId:
+      name: gameId
+      in: path
+      required: true
+      description: MongoDB ObjectId of the game
+      schema:
+        type: string
+        pattern: "^[a-fA-F0-9]{24}$"
+      example: 665f1e5a9a2f1a0012b34567
+
+  responses:
+    BadRequest:
+      description: Invalid input, invalid ObjectId, invalid token, or duplicate data
+      content:
+        text/plain:
+          schema:
+            type: string
+          example: Invalid game id.
+    Unauthorized:
+      description: Missing authentication token
+      content:
+        text/plain:
+          schema:
+            type: string
+          example: Access denied. No token provided.
+    Forbidden:
+      description: Authenticated user is not allowed to perform this action
+      content:
+        text/plain:
+          schema:
+            type: string
+          example: Access denied.
+    NotFound:
+      description: Requested resource was not found
+      content:
+        text/plain:
+          schema:
+            type: string
+          example: Game not found.
+    InternalServerError:
+      description: Unexpected server error
+      content:
+        text/plain:
+          schema:
+            type: string
+          example: Internal Server Error
+
+  schemas:
+    ObjectId:
+      type: string
+      pattern: "^[a-fA-F0-9]{24}$"
+      example: 665f1e5a9a2f1a0012b34567
+
+    RegisterRequest:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: Vic
+        email:
+          type: string
+          format: email
+          minLength: 5
+          maxLength: 255
+          example: vic@example.com
+        password:
+          type: string
+          minLength: 8
+          maxLength: 255
+          format: password
+          example: password123
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 5
+          maxLength: 255
+          example: vic@example.com
+        password:
+          type: string
+          minLength: 8
+          maxLength: 255
+          format: password
+          example: password123
+
+    BrandInput:
+      type: object
+      required:
+        - name
+        - country
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: Nintendo
+        country:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: Japan
+        foundedYear:
+          type: integer
+          minimum: 1800
+          example: 1889
+        description:
+          type: string
+          maxLength: 1000
+          example: Japanese video game company.
+
+    Brand:
+      allOf:
+        - $ref: "#/components/schemas/BrandInput"
+        - type: object
+          required:
+            - _id
+          properties:
+            _id:
+              $ref: "#/components/schemas/ObjectId"
+
+    FranchiseInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: The Legend of Zelda
+        createdBy:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: Nintendo
+        firstReleaseYear:
+          type: integer
+          minimum: 1950
+          example: 1986
+        description:
+          type: string
+          maxLength: 1000
+          example: Action-adventure game franchise by Nintendo.
+
+    Franchise:
+      allOf:
+        - $ref: "#/components/schemas/FranchiseInput"
+        - type: object
+          required:
+            - _id
+          properties:
+            _id:
+              $ref: "#/components/schemas/ObjectId"
+
+    ConsoleSpecs:
+      type: object
+      properties:
+        cpu:
+          type: string
+          maxLength: 100
+          example: Ricoh 5A22
+        memory:
+          type: string
+          maxLength: 100
+          example: 128 KB RAM
+        media:
+          type: string
+          maxLength: 100
+          example: ROM cartridge
+        maxResolution:
+          type: string
+          maxLength: 50
+          example: 512x448
+
+    ConsoleInput:
+      type: object
+      required:
+        - name
+        - brand
+        - releaseYear
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: Super Nintendo Entertainment System
+        brand:
+          $ref: "#/components/schemas/ObjectId"
+        generation:
+          type: integer
+          minimum: 1
+          maximum: 10
+          example: 4
+        releaseYear:
+          type: integer
+          minimum: 1970
+          example: 1990
+        description:
+          type: string
+          maxLength: 1000
+          example: A 16-bit home video game console.
+        specs:
+          $ref: "#/components/schemas/ConsoleSpecs"
+
+    Console:
+      type: object
+      required:
+        - _id
+        - name
+        - brand
+        - releaseYear
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        name:
+          type: string
+          example: Super Nintendo Entertainment System
+        brand:
+          oneOf:
+            - $ref: "#/components/schemas/ObjectId"
+            - $ref: "#/components/schemas/BrandSummary"
+        generation:
+          type: integer
+          example: 4
+        releaseYear:
+          type: integer
+          example: 1990
+        description:
+          type: string
+          example: A 16-bit home video game console.
+        specs:
+          $ref: "#/components/schemas/ConsoleSpecs"
+
+    ReleaseInfo:
+      type: object
+      properties:
+        region:
+          type: string
+          maxLength: 80
+          example: Japan
+        originalReleaseDate:
+          type: string
+          format: date-time
+          example: 1986-02-21T00:00:00.000Z
+        ageRating:
+          type: string
+          maxLength: 20
+          example: E
+
+    GameInput:
+      type: object
+      required:
+        - title
+        - consoles
+        - publisher
+        - releaseYear
+      properties:
+        title:
+          type: string
+          minLength: 2
+          maxLength: 150
+          example: The Legend of Zelda
+        franchise:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/ObjectId"
+            - type: string
+              enum:
+                - ""
+        consoles:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/ObjectId"
+        publisher:
+          $ref: "#/components/schemas/ObjectId"
+        releaseYear:
+          type: integer
+          minimum: 1970
+          example: 1986
+        genre:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: Action-adventure
+        description:
+          type: string
+          maxLength: 1000
+          example: Explore Hyrule and rescue Princess Zelda.
+        releaseInfo:
+          $ref: "#/components/schemas/ReleaseInfo"
+
+    Game:
+      type: object
+      required:
+        - _id
+        - title
+        - consoles
+        - publisher
+        - releaseYear
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        title:
+          type: string
+          example: The Legend of Zelda
+        franchise:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/ObjectId"
+            - $ref: "#/components/schemas/FranchiseSummary"
+        consoles:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/ObjectId"
+              - $ref: "#/components/schemas/ConsoleSummary"
+        publisher:
+          oneOf:
+            - $ref: "#/components/schemas/ObjectId"
+            - $ref: "#/components/schemas/BrandNameSummary"
+        releaseYear:
+          type: integer
+          example: 1986
+        genre:
+          type: string
+          example: Action-adventure
+        description:
+          type: string
+          example: Explore Hyrule and rescue Princess Zelda.
+        releaseInfo:
+          $ref: "#/components/schemas/ReleaseInfo"
+
+    ReviewInput:
+      type: object
+      required:
+        - rating
+        - comment
+      properties:
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 10
+          example: 9
+        comment:
+          type: string
+          minLength: 2
+          maxLength: 1000
+          example: Still plays great today.
+
+    ReviewUpdateInput:
+      type: object
+      minProperties: 1
+      properties:
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 10
+          example: 8
+        comment:
+          type: string
+          minLength: 2
+          maxLength: 1000
+          example: Updated review after replaying it.
+
+    Review:
+      type: object
+      required:
+        - _id
+        - user
+        - game
+        - rating
+        - comment
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        user:
+          oneOf:
+            - $ref: "#/components/schemas/ObjectId"
+            - $ref: "#/components/schemas/UserSummary"
+        game:
+          oneOf:
+            - $ref: "#/components/schemas/ObjectId"
+            - $ref: "#/components/schemas/GameSummary"
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 10
+          example: 9
+        comment:
+          type: string
+          example: Still plays great today.
+        createdAt:
+          type: string
+          format: date-time
+          example: 2026-05-20T15:00:00.000Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2026-05-20T15:00:00.000Z
+
+    UserUpdateInput:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: Vic Hagens
+        email:
+          type: string
+          format: email
+          minLength: 5
+          maxLength: 255
+          example: vic@example.com
+        role:
+          type: string
+          enum:
+            - user
+            - admin
+          example: user
+
+    UserPublic:
+      type: object
+      required:
+        - _id
+        - name
+        - email
+        - role
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        name:
+          type: string
+          example: Vic
+        email:
+          type: string
+          format: email
+          example: vic@example.com
+        role:
+          type: string
+          enum:
+            - user
+            - admin
+          example: user
+
+    BrandSummary:
+      type: object
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        name:
+          type: string
+          example: Nintendo
+        country:
+          type: string
+          example: Japan
+
+    BrandNameSummary:
+      type: object
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        name:
+          type: string
+          example: Nintendo
+
+    ConsoleSummary:
+      type: object
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        name:
+          type: string
+          example: Super Nintendo Entertainment System
+        releaseYear:
+          type: integer
+          example: 1990
+
+    FranchiseSummary:
+      type: object
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        name:
+          type: string
+          example: The Legend of Zelda
+
+    GameSummary:
+      type: object
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        title:
+          type: string
+          example: The Legend of Zelda
+        releaseYear:
+          type: integer
+          example: 1986
+
+    UserSummary:
+      type: object
+      properties:
+        _id:
+          $ref: "#/components/schemas/ObjectId"
+        name:
+          type: string
+          example: Vic
+        email:
+          type: string
+          format: email
+          example: vic@example.com
