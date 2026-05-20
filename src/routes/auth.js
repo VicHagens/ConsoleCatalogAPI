@@ -2,17 +2,20 @@ const bcrypt = require("bcrypt");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const { validateLogin } = require("../validation/authValidation");
 
 const router = express.Router();
 
 // POST /api/auth - Login a user
 router.post("/", async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { error } = validateLogin(req.body);
 
-    if (!email || !password) {
-      return res.status(400).send("Email and password are required.");
+    if (error) {
+      return res.status(400).send(error.details[0].message);
     }
+
+    const { email, password } = req.body;
 
     const user = await User.findOne({ email });
 

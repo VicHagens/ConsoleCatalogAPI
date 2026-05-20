@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const User = require("../models/user");
 const authMiddleware = require("../middleware/auth");
 const adminMiddleware = require("../middleware/admin");
+const { validateRegister } = require("../validation/authValidation");
+const { validateUpdateUser } = require("../validation/userValidation");
 
 const router = express.Router();
 
@@ -55,17 +57,13 @@ router.get("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
 // POST /api/users - Register a new user
 router.post("/", async (req, res, next) => {
   try {
+    const { error } = validateRegister(req.body);
+
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
+
     const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).send("Name, email and password are required.");
-    }
-
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .send("Password must be at least 6 characters long.");
-    }
 
     const existingUser = await User.findOne({ email });
 
@@ -109,18 +107,16 @@ router.put("/:id", authMiddleware, async (req, res, next) => {
       return res.status(403).send("Access denied.");
     }
 
-    const { name, email, role } = req.body;
+    const { error } = validateUpdateUser(req.body);
 
-    if (!name || !email) {
-      return res.status(400).send("Name and email are required.");
+    if (error) {
+      return res.status(400).send(error.details[0].message);
     }
+
+    const { name, email, role } = req.body;
 
     if (role && !isAdmin) {
       return res.status(403).send("Users cannot update their own role.");
-    }
-
-    if (role && role !== "user" && role !== "admin") {
-      return res.status(400).send("Role must be user or admin.");
     }
 
     const existingUser = await User.findOne({
