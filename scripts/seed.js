@@ -1,11 +1,11 @@
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-const Brand = require("./models/brand");
-const Console = require("./models/console");
-const Franchise = require("./models/franchise");
-const Game = require("./models/game");
-const Review = require("./models/review");
+const Brand = require("../src/models/brand");
+const Console = require("../src/models/console");
+const Franchise = require("../src/models/franchise");
+const Game = require("../src/models/game");
+const Review = require("../src/models/review");
 
 async function seedDatabase() {
   if (!process.env.MONGODB_URI) {
