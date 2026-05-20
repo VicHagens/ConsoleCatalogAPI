@@ -4,6 +4,7 @@ const ConsoleModel = require("../models/console");
 const Brand = require("../models/brand");
 const adminMiddleware = require("../middleware/admin");
 const authMiddleware = require("../middleware/auth");
+const validateConsole = require("../validation/consoleValidation");
 
 const router = express.Router();
 
@@ -45,11 +46,13 @@ router.get("/:id", async (req, res, next) => {
 // POST /api/consoles - Create a new console
 router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
-    const { name, brand, generation, releaseYear, description } = req.body;
+    const { error } = validateConsole(req.body);
 
-    if (!name || !brand || !releaseYear) {
-      return res.status(400).send("Name, brand and release year are required.");
+    if (error) {
+      return res.status(400).send(error.details[0].message);
     }
+
+    const { name, brand, generation, releaseYear, description } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(brand)) {
       return res.status(400).send("Invalid brand id.");
@@ -83,11 +86,13 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(400).send("Invalid console id.");
     }
 
-    const { name, brand, generation, releaseYear, description } = req.body;
+    const { error } = validateConsole(req.body);
 
-    if (!name || !brand || !releaseYear) {
-      return res.status(400).send("Name, brand and release year are required.");
+    if (error) {
+      return res.status(400).send(error.details[0].message);
     }
+
+    const { name, brand, generation, releaseYear, description } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(brand)) {
       return res.status(400).send("Invalid brand id.");

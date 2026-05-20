@@ -6,6 +6,7 @@ const ConsoleModel = require("../models/console");
 const Franchise = require("../models/franchise");
 const adminMiddleware = require("../middleware/admin");
 const authMiddleware = require("../middleware/auth");
+const validateGame = require("../validation/gameValidation");
 
 const router = express.Router();
 
@@ -49,6 +50,12 @@ router.get("/:id", async (req, res, next) => {
 // POST /api/games - Create a new game
 router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
+    const { error } = validateGame(req.body);
+
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
+
     const {
       title,
       franchise,
@@ -58,16 +65,6 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
       genre,
       description,
     } = req.body;
-
-    if (!title || !consoles || !publisher || !releaseYear) {
-      return res
-        .status(400)
-        .send("Title, consoles, publisher and release year are required.");
-    }
-
-    if (!Array.isArray(consoles) || consoles.length === 0) {
-      return res.status(400).send("Consoles must be a non-empty array.");
-    }
 
     if (!mongoose.Types.ObjectId.isValid(publisher)) {
       return res.status(400).send("Invalid publisher id.");
@@ -129,6 +126,12 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(400).send("Invalid game id.");
     }
 
+    const { error } = validateGame(req.body);
+
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
+
     const {
       title,
       franchise,
@@ -138,16 +141,6 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
       genre,
       description,
     } = req.body;
-
-    if (!title || !consoles || !publisher || !releaseYear) {
-      return res
-        .status(400)
-        .send("Title, consoles, publisher and release year are required.");
-    }
-
-    if (!Array.isArray(consoles) || consoles.length === 0) {
-      return res.status(400).send("Consoles must be a non-empty array.");
-    }
 
     if (!mongoose.Types.ObjectId.isValid(publisher)) {
       return res.status(400).send("Invalid publisher id.");
