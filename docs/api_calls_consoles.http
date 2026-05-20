@@ -1,0 +1,40 @@
+@baseUrl = http://localhost:3000
+@adminToken = paste-admin-token-here
+@consoleId = paste-console-id-here
+@brandId = paste-brand-id-here
+
+### Get all consoles
+GET {{baseUrl}}/api/consoles
+
+### Get console by id
+GET {{baseUrl}}/api/consoles/{{consoleId}}
+
+### Create console - admin only
+POST {{baseUrl}}/api/consoles
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "PlayStation 2",
+  "brand": "{{brandId}}",
+  "generation": 6,
+  "releaseYear": 2000,
+  "description": ""
+}
+
+### Update console - admin only
+PUT {{baseUrl}}/api/consoles/{{consoleId}}
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "PlayStation 2",
+  "brand": "{{brandId}}",
+  "generation": 6,
+  "releaseYear": 2000,
+  "description": "Sony console known for its large game library."
+}
+
+### Delete console - admin only
+DELETE {{baseUrl}}/api/consoles/{{consoleId}}
+x-auth-token: {{adminToken}}

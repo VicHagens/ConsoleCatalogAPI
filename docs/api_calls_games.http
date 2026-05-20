@@ -1,0 +1,46 @@
+@baseUrl = http://localhost:3000
+@adminToken = paste-admin-token-here
+@gameId = paste-game-id-here
+@consoleId = paste-console-id-here
+@publisherId = paste-brand-id-here
+@franchiseId = paste-franchise-id-here
+
+### Get all games
+GET {{baseUrl}}/api/games
+
+### Get game by id
+GET {{baseUrl}}/api/games/{{gameId}}
+
+### Create game - admin only
+POST {{baseUrl}}/api/games
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Pokemon Red",
+  "franchise": "{{franchiseId}}",
+  "consoles": ["{{consoleId}}"],
+  "publisher": "{{publisherId}}",
+  "releaseYear": 1996,
+  "genre": "Role-playing",
+  "description": "Classic monster collecting RPG."
+}
+
+### Update game - admin only
+PUT {{baseUrl}}/api/games/{{gameId}}
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "title": "Pokemon Red",
+  "franchise": "{{franchiseId}}",
+  "consoles": ["{{consoleId}}"],
+  "publisher": "{{publisherId}}",
+  "releaseYear": 1996,
+  "genre": "Role-playing",
+  "description": "Updated game description."
+}
+
+### Delete game - admin only
+DELETE {{baseUrl}}/api/games/{{gameId}}
+x-auth-token: {{adminToken}}

@@ -1,0 +1,51 @@
+@baseUrl = http://localhost:3000
+@token = paste-user-token-here
+@adminToken = paste-admin-token-here
+@userId = paste-user-id-here
+
+### Register user
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Vic",
+  "email": "vic@example.com",
+  "password": "password123"
+}
+
+### Get current user
+GET {{baseUrl}}/api/users/me
+x-auth-token: {{token}}
+
+### Get all users - admin only
+GET {{baseUrl}}/api/users
+x-auth-token: {{adminToken}}
+
+### Get user by id - admin only
+GET {{baseUrl}}/api/users/{{userId}}
+x-auth-token: {{adminToken}}
+
+### Update own profile
+PUT {{baseUrl}}/api/users/{{userId}}
+x-auth-token: {{token}}
+Content-Type: application/json
+
+{
+  "name": "Vic Updated",
+  "email": "vic.updated@example.com"
+}
+
+### Update user as admin
+PUT {{baseUrl}}/api/users/{{userId}}
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Vic Admin Updated",
+  "email": "vic.admin.updated@example.com",
+  "role": "admin"
+}
+
+### Delete user - admin only
+DELETE {{baseUrl}}/api/users/{{userId}}
+x-auth-token: {{adminToken}}

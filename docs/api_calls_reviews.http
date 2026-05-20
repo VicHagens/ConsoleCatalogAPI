@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:3000
+@token = paste-user-token-here
+@adminToken = paste-admin-token-here
+@gameId = paste-game-id-here
+@reviewId = paste-review-id-here
+
+### Get all reviews
+GET {{baseUrl}}/api/reviews
+
+### Get review by id
+GET {{baseUrl}}/api/reviews/{{reviewId}}
+
+### Get reviews for a game
+GET {{baseUrl}}/api/games/{{gameId}}/reviews
+
+### Create review for a game - logged-in user
+POST {{baseUrl}}/api/games/{{gameId}}/reviews
+x-auth-token: {{token}}
+Content-Type: application/json
+
+{
+  "rating": 9,
+  "comment": "Still plays great today."
+}
+
+### Update own review
+PATCH {{baseUrl}}/api/reviews/{{reviewId}}
+x-auth-token: {{token}}
+Content-Type: application/json
+
+{
+  "rating": 8,
+  "comment": "Updated review after replaying it."
+}
+
+### Delete own review
+DELETE {{baseUrl}}/api/reviews/{{reviewId}}
+x-auth-token: {{token}}
+
+### Delete review as admin
+DELETE {{baseUrl}}/api/reviews/{{reviewId}}
+x-auth-token: {{adminToken}}

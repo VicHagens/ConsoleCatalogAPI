@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:3000
+@adminToken = paste-admin-token-here
+@brandId = paste-brand-id-here
+
+### Get all brands
+GET {{baseUrl}}/api/brands
+
+### Get brand by id
+GET {{baseUrl}}/api/brands/{{brandId}}
+
+### Create brand - admin only
+POST {{baseUrl}}/api/brands
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Sony",
+  "country": "Japan",
+  "foundedYear": 1946,
+  "description": ""
+}
+
+### Update brand - admin only
+PUT {{baseUrl}}/api/brands/{{brandId}}
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Sony",
+  "country": "Japan",
+  "foundedYear": 1946,
+  "description": "Japanese technology company behind the PlayStation brand."
+}
+
+### Delete brand - admin only
+DELETE {{baseUrl}}/api/brands/{{brandId}}
+x-auth-token: {{adminToken}}

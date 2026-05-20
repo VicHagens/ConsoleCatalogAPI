@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:3000
+@adminToken = paste-admin-token-here
+@franchiseId = paste-franchise-id-here
+
+### Get all franchises
+GET {{baseUrl}}/api/franchises
+
+### Get franchise by id
+GET {{baseUrl}}/api/franchises/{{franchiseId}}
+
+### Create franchise - admin only
+POST {{baseUrl}}/api/franchises
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Pokemon",
+  "createdBy": "Game Freak",
+  "firstReleaseYear": 1996,
+  "description": ""
+}
+
+### Update franchise - admin only
+PUT {{baseUrl}}/api/franchises/{{franchiseId}}
+x-auth-token: {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Pokemon",
+  "createdBy": "Game Freak",
+  "firstReleaseYear": 1996,
+  "description": "Monster collecting RPG franchise."
+}
+
+### Delete franchise - admin only
+DELETE {{baseUrl}}/api/franchises/{{franchiseId}}
+x-auth-token: {{adminToken}}
