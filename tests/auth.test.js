@@ -1,52 +1,31 @@
-const express = require("express");
 const request = require("supertest");
+const mongoose = require("mongoose");
+const { MongoMemoryServer } = require("mongodb-memory-server");
+const app = require("../src/app");
+const User = require("../src/models/user");
 
-jest.mock("bcrypt", () => ({
-  genSalt: jest.fn(),
-  hash: jest.fn(),
-  compare: jest.fn(),
-}));
+let mongoServer;
 
-jest.mock("../src/models/user", () => {
-  function User(data) {
-    Object.assign(this, data);
-    this._id = "new-user-id";
-    this.role = this.role || "user";
-    this.save = jest.fn().mockResolvedValue(this);
-  }
+beforeAll(async () => {
+  process.env.JWT_SECRET = "test_jwt_secret";
+  process.env.JWT_EXPIRES_IN = "1h";
 
-  User.findOne = jest.fn();
-
-  return User;
+  mongoServer = await MongoMemoryServer.create();
+  await mongoose.connect(mongoServer.getUri());
 });
 
-const bcrypt = require("bcrypt");
-const User = require("../src/models/user");
-const authRouter = require("../src/routes/auth");
+afterEach(async () => {
+  await User.deleteMany({});
+});
 
-function createApp() {
-  const app = express();
-  app.use(express.json());
-  app.use("/api/auth", authRouter);
-  return app;
-}
+afterAll(async () => {
+  await mongoose.disconnect();
+  await mongoServer.stop();
+});
 
 describe("Auth routes", () => {
-  let app;
-
-  beforeEach(() => {
-    app = createApp();
-    jest.clearAllMocks();
-    process.env.JWT_SECRET = "test-secret";
-    process.env.JWT_EXPIRES_IN = "1h";
-  });
-
   describe("POST /api/auth/register", () => {
     test("registers a new user", async () => {
-      User.findOne.mockResolvedValue(null);
-      bcrypt.genSalt.mockResolvedValue("salt");
-      bcrypt.hash.mockResolvedValue("hashed-password");
-
       const response = await request(app).post("/api/auth/register").send({
         name: "Vic",
         email: "vic@example.com",
@@ -55,18 +34,19 @@ describe("Auth routes", () => {
 
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({
-        _id: "new-user-id",
         name: "Vic",
         email: "vic@example.com",
         role: "user",
       });
       expect(response.body.password).toBeUndefined();
-      expect(bcrypt.hash).toHaveBeenCalledWith("password123", "salt");
+      expect(await User.countDocuments()).toBe(1);
     });
 
     test("returns 400 when email already exists", async () => {
-      User.findOne.mockResolvedValue({
+      await request(app).post("/api/auth/register").send({
+        name: "Vic",
         email: "vic@example.com",
+        password: "password123",
       });
 
       const response = await request(app).post("/api/auth/register").send({
@@ -87,19 +67,17 @@ describe("Auth routes", () => {
       });
 
       expect(response.status).toBe(400);
-      expect(User.findOne).not.toHaveBeenCalled();
+      expect(await User.countDocuments()).toBe(0);
     });
   });
 
   describe("POST /api/auth/login", () => {
     test("returns a token for valid credentials", async () => {
-      User.findOne.mockResolvedValue({
-        _id: "user-id",
+      await request(app).post("/api/auth/register").send({
+        name: "Vic",
         email: "vic@example.com",
-        password: "hashed-password",
-        role: "admin",
+        password: "password123",
       });
-      bcrypt.compare.mockResolvedValue(true);
 
       const response = await request(app).post("/api/auth/login").send({
         email: "vic@example.com",
@@ -111,8 +89,6 @@ describe("Auth routes", () => {
     });
 
     test("returns 400 when the user does not exist", async () => {
-      User.findOne.mockResolvedValue(null);
-
       const response = await request(app).post("/api/auth/login").send({
         email: "missing@example.com",
         password: "password123",
@@ -123,17 +99,15 @@ describe("Auth routes", () => {
     });
 
     test("returns 400 when the password is wrong", async () => {
-      User.findOne.mockResolvedValue({
-        _id: "user-id",
+      await request(app).post("/api/auth/register").send({
+        name: "Vic",
         email: "vic@example.com",
-        password: "hashed-password",
-        role: "user",
+        password: "password123",
       });
-      bcrypt.compare.mockResolvedValue(false);
 
       const response = await request(app).post("/api/auth/login").send({
         email: "vic@example.com",
-        password: "password123",
+        password: "wrongpassword",
       });
 
       expect(response.status).toBe(400);
@@ -141,14 +115,12 @@ describe("Auth routes", () => {
     });
 
     test("returns 500 when JWT_SECRET is missing", async () => {
-      delete process.env.JWT_SECRET;
-      User.findOne.mockResolvedValue({
-        _id: "user-id",
+      await request(app).post("/api/auth/register").send({
+        name: "Vic",
         email: "vic@example.com",
-        password: "hashed-password",
-        role: "user",
+        password: "password123",
       });
-      bcrypt.compare.mockResolvedValue(true);
+      delete process.env.JWT_SECRET;
 
       const response = await request(app).post("/api/auth/login").send({
         email: "vic@example.com",
@@ -157,6 +129,7 @@ describe("Auth routes", () => {
 
       expect(response.status).toBe(500);
       expect(response.text).toBe("JWT secret is not configured.");
+      process.env.JWT_SECRET = "test_jwt_secret";
     });
   });
 });
