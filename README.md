@@ -28,8 +28,9 @@ Het project volgt de cursusaanpak van het vak: Express routes, middleware, Mongo
 | Centrale error middleware | Klaar |
 | REST Client `.http` files | Klaar |
 | Manueel testen via `.http` files | Klaar |
-| Unit tests | Nog te doen |
-| Integration tests | Nog te doen |
+| Swagger / OpenAPI documentatie | Klaar |
+| Unit tests | Klaar |
+| Integration tests met in-memory MongoDB | Klaar |
 | Deployment | Nog te doen |
 
 ## Links
@@ -45,6 +46,8 @@ API documentatie:
 ```txt
 README.md
 docs/*.http
+docs/openapi.yaml
+http://localhost:3000/api-docs
 ```
 
 Na deployment worden de live URL en eventuele extra documentatielink hier ingevuld.
@@ -63,6 +66,8 @@ Na deployment worden de live URL en eventuele extra documentatielink hier ingevu
 - ObjectId checks voor MongoDB-acties
 - Demo data via een seed script
 - REST Client bestanden met succesvolle en falende requestvoorbeelden
+- Swagger UI via `/api-docs`
+- Unit en integration tests met Jest, Supertest en MongoMemoryServer
 
 ## Tech Stack
 
@@ -76,6 +81,11 @@ JSON Web Tokens
 bcrypt
 dotenv
 REST Client
+Swagger UI
+OpenAPI
+Jest
+Supertest
+MongoMemoryServer
 ```
 
 ## Projectstructuur
@@ -89,6 +99,7 @@ docs/
   api_calls_games.http
   api_calls_reviews.http
   api_calls_users.http
+  openapi.yaml
 scripts/
    seed.js
 src/
@@ -124,6 +135,18 @@ src/
     gameValidation.js
     reviewValidation.js
     userValidation.js
+tests/
+  app.test.js
+  auth.test.js
+  brands.test.js
+  consoles.test.js
+  docs.test.js
+  franchises.test.js
+  games.test.js
+  middleware.test.js
+  reviews.test.js
+  users.test.js
+  validation.test.js
 ```
 
 ## Installatie
@@ -170,6 +193,12 @@ npm run dev
 http://localhost:3000/
 ```
 
+7. Open de Swagger documentatie.
+
+```txt
+http://localhost:3000/api-docs
+```
+
 ## Scripts
 
 | Script | Uitleg |
@@ -177,6 +206,7 @@ http://localhost:3000/
 | `npm start` | Start de server met Node |
 | `npm run dev` | Start de server met nodemon |
 | `npm run seed` | Vult de database met demo catalogusdata |
+| `npm test` | Voert alle Jest tests uit |
 
 Het seed script staat in:
 
@@ -649,6 +679,24 @@ of voor adminroutes:
 x-auth-token: paste-admin-token-here
 ```
 
+## Swagger Documentatie
+
+De API heeft ook Swagger documentatie op basis van OpenAPI.
+
+De OpenAPI-specificatie staat in:
+
+```txt
+docs/openapi.yaml
+```
+
+Wanneer de API draait, is de Swagger UI bereikbaar via:
+
+```txt
+http://localhost:3000/api-docs
+```
+
+Swagger gebruikt dezelfde routes als de echte API. Beschermde routes gebruiken de `x-auth-token` header, net zoals in de REST Client bestanden.
+
 ## Demo Data
 
 Met het seed script kan de database gevuld worden met demo data:
@@ -668,18 +716,43 @@ Het script gebruikt de `MONGODB_URI` uit `.env`.
 
 ## Testing
 
-De `.http` bestanden zijn manueel getest en werken zoals verwacht.
+De `.http` bestanden zijn manueel getest en werken zoals verwacht. Daarnaast bevat het project automatische tests met Jest en Supertest.
 
-Automated tests moeten nog toegevoegd worden.
+De tests staan in:
 
-Geplande tests:
+```txt
+tests/
+```
 
-- register en login
-- protected routes zonder token
-- admin-only routes met gewone user
-- publieke catalogus GET routes
-- Joi validation failures
-- review owner/admin permissions
+Er zijn tests voor:
+
+- algemene app routes
+- Swagger documentatie
+- auth register/login
+- middleware
+- Joi validation
+- Mongoose models
+- brands routes
+- consoles routes
+- franchises routes
+- games routes
+- reviews routes
+- users routes
+
+De integration tests gebruiken `mongodb-memory-server`. Daardoor draaien ze tegen een tijdelijke in-memory MongoDB database en raken ze de echte lokale of productie-database niet.
+
+Tests uitvoeren:
+
+```bash
+npm test
+```
+
+Huidige teststatus:
+
+```txt
+Test Suites: 11 passed, 11 total
+Tests: 65 passed, 65 total
+```
 
 ## Deployment Guide
 
