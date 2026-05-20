@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Brand = require("../models/brand");
 const adminMiddleware = require("../middleware/admin");
 const authMiddleware = require("../middleware/auth");
-const validateBrand = require("../validators/brandValidation");
+const validateBrand = require("../validation/brandValidation");
 
 const router = express.Router();
 
