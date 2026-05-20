@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Game = require("../models/game");
 const Brand = require("../models/brand");
-const ConsoleModel = require("../models/console");
+const Console = require("../models/console");
 const Franchise = require("../models/franchise");
 const adminMiddleware = require("../middleware/admin");
 const authMiddleware = require("../middleware/auth");
@@ -26,7 +26,8 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.use("/:gameId/reviews", reviews); // ik plaats dit hier in plaats van in app.js omdat ik de gameId nodig heb in de reviews routes, en die is alleen beschikbaar in deze router. plus ook omdat het logisch is.
+// Nested reviews need mergeParams in the reviews router to access gameId.
+router.use("/:gameId/reviews", reviews);
 
 // GET /api/games/:id - Get game by id
 router.get("/:id", async (req, res, next) => {
@@ -76,7 +77,7 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(404).send("Publisher not found.");
     }
 
-    const existingConsoles = await ConsoleModel.find({
+    const existingConsoles = await Console.find({
       _id: { $in: consoles },
     });
 
@@ -140,7 +141,7 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(404).send("Publisher not found.");
     }
 
-    const existingConsoles = await ConsoleModel.find({
+    const existingConsoles = await Console.find({
       _id: { $in: consoles },
     });
 

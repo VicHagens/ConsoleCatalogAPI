@@ -15,7 +15,7 @@ const errorHandler = require("./middleware/error");
 
 const app = express();
 
-const swaggerDocument = YAML.load(path.join(__dirname, '../docs/openapi.yaml'));
+const swaggerDocument = YAML.load(path.join(__dirname, "../docs/openapi.yaml"));
 
 app.use(express.json());
 

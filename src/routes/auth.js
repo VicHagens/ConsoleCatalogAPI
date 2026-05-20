@@ -2,10 +2,7 @@ const bcrypt = require("bcrypt");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const {
-  validateRegister,
-  validateLogin,
-} = require("../validation/authValidation");
+const { validateRegister, validateLogin } = require("../validation/authValidation");
 
 const router = express.Router();
 
@@ -75,7 +72,6 @@ router.post("/login", async (req, res, next) => {
       return res.status(500).send("JWT secret is not configured.");
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       {
         _id: user._id,

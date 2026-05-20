@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const ConsoleModel = require("../models/console");
+const Console = require("../models/console");
 const Brand = require("../models/brand");
 const adminMiddleware = require("../middleware/admin");
 const authMiddleware = require("../middleware/auth");
@@ -11,7 +11,7 @@ const router = express.Router();
 // GET /api/consoles - Get all consoles
 router.get("/", async (req, res, next) => {
   try {
-    const consoles = await ConsoleModel.find()
+    const consoles = await Console.find()
       .populate("brand", "name country")
       .sort("releaseYear");
 
@@ -28,10 +28,7 @@ router.get("/:id", async (req, res, next) => {
       return res.status(400).send("Invalid console id.");
     }
 
-    const consoleItem = await ConsoleModel.findById(req.params.id).populate(
-      "brand",
-      "name country",
-    );
+    const consoleItem = await Console.findById(req.params.id).populate("brand", "name country");
 
     if (!consoleItem) {
       return res.status(404).send("Console not found.");
@@ -60,7 +57,7 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(404).send("Brand not found.");
     }
 
-    const consoleItem = new ConsoleModel({
+    const consoleItem = new Console({
       name,
       brand,
       generation,
@@ -97,7 +94,7 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(404).send("Brand not found.");
     }
 
-    const consoleItem = await ConsoleModel.findByIdAndUpdate(
+    const consoleItem = await Console.findByIdAndUpdate(
       req.params.id,
       {
         name,
@@ -127,7 +124,7 @@ router.delete("/:id", authMiddleware, adminMiddleware, async (req, res, next) =>
       return res.status(400).send("Invalid console id.");
     }
 
-    const consoleItem = await ConsoleModel.findByIdAndDelete(req.params.id);
+    const consoleItem = await Console.findByIdAndDelete(req.params.id);
 
     if (!consoleItem) {
       return res.status(404).send("Console not found.");

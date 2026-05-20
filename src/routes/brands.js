@@ -45,7 +45,7 @@ router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(400).send(error.details[0].message);
     }
 
-    const { name, country, foundedYear, description } = req.body; // om de brand const simpel te houden
+    const { name, country, foundedYear, description } = req.body;
 
     const brand = new Brand({
       name,
