@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Brand = require("../models/brand");
 const adminMiddleware = require("../middleware/admin");
 const authMiddleware = require("../middleware/auth");
+const validateBrand = require("../validators/brandValidation");
 
 const router = express.Router();
 
@@ -38,11 +39,13 @@ router.get("/:id", async (req, res, next) => {
 // POST /api/brands - Create a new brand
 router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
-    const { name, country, foundedYear, description } = req.body; // om de brand const simpel te houden
+    const { error } = validateBrand(req.body);
 
-    if (!name || !country) {
-      return res.status(400).send("Name and country are required.");
+    if (error) {
+      return res.status(400).send(error.details[0].message);
     }
+
+    const { name, country, foundedYear, description } = req.body; // om de brand const simpel te houden
 
     const brand = new Brand({
       name,
@@ -65,11 +68,13 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(400).send("Invalid brand id.");
     }
 
-    const { name, country, foundedYear, description } = req.body;
+    const { error } = validateBrand(req.body);
 
-    if (!name || !country) {
-      return res.status(400).send("Name and country are required.");
+    if (error) {
+      return res.status(400).send(error.details[0].message);
     }
+
+    const { name, country, foundedYear, description } = req.body;
 
     const brand = await Brand.findByIdAndUpdate(
       req.params.id,

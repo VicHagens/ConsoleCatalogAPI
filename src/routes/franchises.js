@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Franchise = require("../models/franchise");
 const adminMiddleware = require("../middleware/admin");
 const authMiddleware = require("../middleware/auth");
+const validateFranchise = require("../validators/franchiseValidation");
 
 const router = express.Router();
 
@@ -38,11 +39,13 @@ router.get("/:id", async (req, res, next) => {
 // POST /api/franchises - Create a new franchise
 router.post("/", authMiddleware, adminMiddleware, async (req, res, next) => {
   try {
-    const { name, createdBy, firstReleaseYear, description } = req.body;
+    const { error } = validateFranchise(req.body);
 
-    if (!name) {
-      return res.status(400).send("Name is required.");
+    if (error) {
+      return res.status(400).send(error.details[0].message);
     }
+
+    const { name, createdBy, firstReleaseYear, description } = req.body;
 
     const franchise = new Franchise({
       name,
@@ -65,11 +68,13 @@ router.put("/:id", authMiddleware, adminMiddleware, async (req, res, next) => {
       return res.status(400).send("Invalid franchise id.");
     }
 
-    const { name, createdBy, firstReleaseYear, description } = req.body;
+    const { error } = validateFranchise(req.body);
 
-    if (!name) {
-      return res.status(400).send("Name is required.");
+    if (error) {
+      return res.status(400).send(error.details[0].message);
     }
+
+    const { name, createdBy, firstReleaseYear, description } = req.body;
 
     const franchise = await Franchise.findByIdAndUpdate(
       req.params.id,
