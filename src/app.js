@@ -2,6 +2,7 @@ const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const path = require("path");
+
 // Import route handlers
 const brands = require("./routes/brands");
 const consoles = require("./routes/consoles");
