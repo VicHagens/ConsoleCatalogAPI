@@ -1,11 +1,13 @@
 require("dotenv").config();
 
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const Brand = require("../src/models/brand");
 const Console = require("../src/models/console");
 const Franchise = require("../src/models/franchise");
 const Game = require("../src/models/game");
 const Review = require("../src/models/review");
+const User = require("../src/models/user");
 
 async function seedDatabase() {
   if (!process.env.MONGODB_URI) {
@@ -20,6 +22,11 @@ async function seedDatabase() {
   await Console.deleteMany();
   await Franchise.deleteMany();
   await Brand.deleteMany();
+  await User.deleteMany({
+    email: {
+      $in: ["admin@consolecatalog.dev", "user@consolecatalog.dev"],
+    },
+  });
 
   const brands = await Brand.insertMany([
     {
@@ -147,7 +154,7 @@ async function seedDatabase() {
   const halo = franchises.find((franchise) => franchise.name === "Halo");
   const sonic = franchises.find((franchise) => franchise.name === "Sonic the Hedgehog");
 
-  await Game.insertMany([
+  const games = await Game.insertMany([
     {
       title: "Super Mario Bros.",
       franchise: mario._id,
@@ -209,7 +216,61 @@ async function seedDatabase() {
     },
   ]);
 
+  const superMarioBros = games.find((game) => game.title === "Super Mario Bros.");
+  const windWaker = games.find((game) => game.title === "The Legend of Zelda: The Wind Waker");
+  const halo3 = games.find((game) => game.title === "Halo 3");
+  const sonicGame = games.find((game) => game.title === "Sonic the Hedgehog");
+
+  const password = await bcrypt.hash("Password123", 10);
+
+  const users = await User.insertMany([
+    {
+      name: "Demo Admin",
+      email: "admin@consolecatalog.dev",
+      password,
+      role: "admin",
+    },
+    {
+      name: "Demo User",
+      email: "user@consolecatalog.dev",
+      password,
+      role: "user",
+    },
+  ]);
+
+  const demoAdmin = users.find((user) => user.role === "admin");
+  const demoUser = users.find((user) => user.role === "user");
+
+  await Review.insertMany([
+    {
+      user: demoUser._id,
+      game: superMarioBros._id,
+      rating: 10,
+      comment: "A timeless platformer that still feels clear, fast, and fun.",
+    },
+    {
+      user: demoAdmin._id,
+      game: windWaker._id,
+      rating: 9,
+      comment: "Beautiful art direction and a strong adventure structure.",
+    },
+    {
+      user: demoUser._id,
+      game: halo3._id,
+      rating: 9,
+      comment: "One of the defining multiplayer shooters of the Xbox 360 era.",
+    },
+    {
+      user: demoAdmin._id,
+      game: sonicGame._id,
+      rating: 8,
+      comment: "Fast, colorful, and historically important for Sega.",
+    },
+  ]);
+
   console.log("Seed data inserted successfully");
+  console.log("Demo login: admin@consolecatalog.dev / Password123");
+  console.log("Demo login: user@consolecatalog.dev / Password123");
 }
 
 seedDatabase()

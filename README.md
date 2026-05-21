@@ -31,14 +31,14 @@ Het project volgt de cursusaanpak van het vak: Express routes, middleware, Mongo
 | Swagger / OpenAPI documentatie | Klaar |
 | Unit tests | Klaar |
 | Integration tests met in-memory MongoDB | Klaar |
-| Deployment | Nog te doen |
+| Deployment op Render | Klaar |
 
 ## Links
 
 Live API URL:
 
 ```txt
-Nog toe te voegen na deployment
+https://consolecatalogapi.onrender.com
 ```
 
 API documentatie:
@@ -48,9 +48,11 @@ README.md
 docs/*.http
 docs/openapi.yaml
 http://localhost:3000/api-docs
+https://consolecatalogapi.onrender.com/api-docs
 ```
 
-Na deployment worden de live URL en eventuele extra documentatielink hier ingevuld.
+De live API draait op Render. De database draait in MongoDB Atlas.
+Als Render een andere URL heeft gegenereerd, vervang dan `https://consolecatalogapi.onrender.com` door de URL uit het Render dashboard.
 
 ## Belangrijkste Functionaliteiten
 
@@ -154,8 +156,8 @@ tests/
 1. Clone de repository.
 
 ```bash
-git clone https://github.com/VIVES-Zuid/nodejs-ti-a-final-assignment-VicHagens
-cd nodejs-ti-a-final-assignment-VicHagens
+git clone https://github.com/VicHagens/ConsoleCatalogAPI.git
+cd ConsoleCatalogAPI
 ```
 
 2. Installeer de dependencies.
@@ -169,7 +171,7 @@ npm install
 ```env
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/consolecatalog
-JWT_SECRET=secret_hier
+JWT_SECRET=secret_jwt_hier
 JWT_EXPIRES_IN=1h
 ```
 
@@ -211,10 +213,10 @@ http://localhost:3000/api-docs
 Het seed script staat in:
 
 ```txt
-src/seed.js
+scripts/seed.js
 ```
 
-Let op: het seed script verwijdert bestaande catalogusdata en reviews voordat de demo data opnieuw wordt toegevoegd. Dit voorkomt dat oude reviews blijven verwijzen naar games die opnieuw aangemaakt zijn.
+Let op: het seed script verwijdert bestaande catalogusdata en reviews voordat de demo data opnieuw wordt toegevoegd. Dit voorkomt dat oude reviews blijven verwijzen naar games die opnieuw aangemaakt zijn. Het script verwijdert ook de demo users met email `admin@consolecatalog.dev` en `user@consolecatalog.dev` voordat ze opnieuw worden aangemaakt.
 
 ## Environment Variables
 
@@ -226,6 +228,7 @@ De API gebruikt environment variables zodat gevoelige data niet hardcoded in de 
 | `MONGODB_URI` | MongoDB connection string |
 | `JWT_SECRET` | Secret waarmee JWT tokens ondertekend worden |
 | `JWT_EXPIRES_IN` | Geldigheid van JWT tokens |
+| `NODE_ENV` | Omgeving waarin de app draait, bijvoorbeeld `production` op Render |
 
 Belangrijk:
 
@@ -233,6 +236,8 @@ Belangrijk:
 - `JWT_SECRET` moet in productie een sterke geheime waarde zijn.
 - `JWT_EXPIRES_IN` zorgt ervoor dat tokens niet onbeperkt geldig zijn.
 - MongoDB connection strings worden via environment variables ingesteld.
+- In Render wordt `PORT` automatisch ingevuld. Lokaal kan `PORT=3000` gebruikt worden.
+- `NODE_ENV=production` hoort vooral bij de Render environment variables en is lokaal niet verplicht.
 
 ## Database Ontwerp
 
@@ -711,8 +716,19 @@ Het seed script maakt demo data aan voor:
 - consoles
 - franchises
 - games
+- users
+- reviews
 
-Het script gebruikt de `MONGODB_URI` uit `.env`.
+Het script gebruikt de `MONGODB_URI` uit `.env`. Als deze variabele naar MongoDB Atlas verwijst, wordt de online database gevuld. Als deze variabele naar een lokale MongoDB verwijst, wordt de lokale database gevuld.
+
+Demo accounts na het seeden:
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@consolecatalog.dev` | `Password123` |
+| User | `user@consolecatalog.dev` | `Password123` |
+
+Gebruik deze demo accounts alleen voor testen en documentatie. Voor echte productiegebruikers moeten unieke, sterke wachtwoorden gebruikt worden.
 
 ## Testing
 
@@ -754,32 +770,33 @@ Test Suites: 11 passed, 11 total
 Tests: 65 passed, 65 total
 ```
 
-## Deployment Guide
+## Deployment Guide Render
 
 ### 1. MongoDB Atlas
 
-Maak een MongoDB Atlas database aan en kopieer de connection string.
+Maak een MongoDB Atlas cluster aan en kopieer de connection string via:
+
+```txt
+Connect > Drivers > Node.js
+```
 
 Voorbeeld:
 
 ```txt
-mongodb+srv://<username>:<password>@cluster.mongodb.net/console-catalog-api
+mongodb+srv://<username>:<password>@cluster.mongodb.net/consolecatalog?retryWrites=true&w=majority
 ```
 
-### 2. Hostingplatform
+Vervang:
 
-Mogelijke platformen:
+- `<username>` door de Database Access user
+- `<password>` door het wachtwoord van die Database Access user
+- `consolecatalog` door de naam van de database
 
-```txt
-Render
-Railway
-Fly.io
-Azure
-```
+De MongoDB Atlas user is niet hetzelfde als je gewone MongoDB login. Het gaat om de user die je aanmaakt onder **Database Access**.
 
-Voor deze API is Render of Railway een eenvoudige keuze.
+Voor Render moet Atlas netwerktoegang krijgen. Bij **Network Access** kan voor deze opdracht `0.0.0.0/0` gebruikt worden. Dat betekent dat verbindingen van overal toegelaten zijn. Dit is handig voor Render, omdat Render op dynamische servers draait, maar gebruik altijd een sterk databasewachtwoord.
 
-### 3. Code Pushen
+### 2. Code Pushen
 
 ```bash
 git add .
@@ -787,47 +804,109 @@ git commit -m "Prepare Console Catalog API for deployment"
 git push
 ```
 
-### 4. Web Service Aanmaken
+Controleer voor het pushen dat `.env` niet wordt gecommit. In dit project staat `.env` in `.gitignore`.
 
-Gebruik op het hostingplatform:
+### 3. Render Web Service Aanmaken
+
+Maak in Render een nieuwe **Web Service** aan en koppel de GitHub repository.
+
+Gebruik deze instellingen:
+
+| Setting | Waarde |
+|---|---|
+| Runtime / Language | Node |
+| Branch | `main` |
+| Root Directory | leeg laten |
+| Build Command | `npm install` |
+| Start Command | `npm start` |
+
+`npm start` voert dit uit:
 
 ```bash
-npm install
+node src/server.js
 ```
 
-als build command.
+De server gebruikt:
 
-Gebruik:
-
-```bash
-npm start
+```js
+const PORT = process.env.PORT || 3000;
 ```
 
-als start command.
+Daarom werkt de app lokaal op poort 3000, maar op Render gebruikt hij automatisch de poort die Render voorziet.
 
-### 5. Environment Variables Instellen
+### 4. Environment Variables Instellen
+
+Zet in Render bij **Environment Variables**:
 
 ```env
-PORT=3000
 MONGODB_URI=mongodb+srv://...
 JWT_SECRET=your_production_secret
 JWT_EXPIRES_IN=1h
+NODE_ENV=production
 ```
 
-Sommige platformen vullen `PORT` automatisch in.
+`PORT` moet normaal niet manueel ingesteld worden op Render.
 
-### 6. Deployment Testen
+### 5. Deployen
+
+Klik in Render op **Deploy Web Service**.
+
+Als de service faalt met een MongoDB connection error, controleer dan:
+
+- staat `MONGODB_URI` exact juist geschreven?
+- is `<db_password>` vervangen door het echte database user password?
+- staat bij MongoDB Atlas Network Access `0.0.0.0/0` of een geldig Render IP?
+- bevat de connection string een database naam, bijvoorbeeld `/consolecatalog`?
+
+### 6. Database Vullen
+
+Na de eerste deployment is de Atlas database leeg. Vul ze eenmalig met:
+
+```bash
+npm run seed
+```
+
+Dit commando draait lokaal, maar gebruikt de database uit `MONGODB_URI`. Als je lokale `.env` naar Atlas verwijst, wordt de Atlas database gevuld en ziet de live Render API daarna de data.
+
+### 7. Deployment Testen
 
 Na deployment test je:
 
 ```txt
 GET /
+GET /api-docs
+GET /api/brands
+GET /api/consoles
+GET /api/franchises
 GET /api/games
-POST /api/auth/login
-GET /api/users/me
+GET /api/reviews
 ```
 
-Daarna moeten de live links bovenaan deze README ingevuld worden.
+Login testen kan met het demo admin account nadat de seed uitgevoerd is:
+
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@consolecatalog.dev",
+  "password": "Password123"
+}
+```
+
+De response bevat een JWT token. Die token kan gebruikt worden in de `x-auth-token` header voor beschermde routes.
+
+### 8. Na Wijzigingen
+
+Wanneer code wordt aangepast:
+
+```bash
+git add .
+git commit -m "Beschrijving van de wijziging"
+git push
+```
+
+Render deployt daarna automatisch opnieuw vanaf de laatste commit op `main`.
 
 ## Security Notes
 
